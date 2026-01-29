@@ -42,6 +42,18 @@ BookingSchema.pre("save", async function () {
   }
 });
 
+// Index for fast event lookup
+BookingSchema.index({ eventId: 1 });
+
+// Index for fast event lookup
+BookingSchema.index({ createdAt: -1 });
+
+// Index for fast email lookup
+BookingSchema.index({ email: 1 });
+
+// Ensure unique booking per event per email
+BookingSchema.index({ eventId: 1, email: 1 }, { unique: true });
+
 // Avoid recompilation
 const Booking = models.Booking || model<IBooking>("Booking", BookingSchema);
 
