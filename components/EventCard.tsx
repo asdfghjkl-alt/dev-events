@@ -1,5 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import posthog from "posthog-js";
 
 export default function EventCard({
   title,
@@ -16,8 +19,18 @@ export default function EventCard({
   date: string;
   time: string;
 }) {
+  const handleEventCardClick = () => {
+    posthog.capture("event_card_clicked", {
+      event_title: title,
+      event_slug: slug,
+      event_location: location,
+      event_date: date,
+      event_time: time,
+    });
+  };
+
   return (
-    <Link href={`/events/${slug}`} id="event-card">
+    <Link href={`/events/${slug}`} id="event-card" onClick={handleEventCardClick}>
       <Image
         src={image}
         alt={title}
