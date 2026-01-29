@@ -1,12 +1,18 @@
 import { Schema, models, model } from "mongoose";
 
+export interface IImage {
+  url: string;
+  filename: string;
+  size: number;
+}
+
 // Interface for the Event document, defining raw data structure
 export interface IEvent {
   title: string;
   slug: string;
   description: string;
   overview: string;
-  image: string;
+  image: IImage[];
   venue: string;
   location: string;
   date: string;
@@ -20,6 +26,25 @@ export interface IEvent {
   updatedAt: Date;
 }
 
+const imageSchema = new Schema<IImage>(
+  {
+    url: { type: String, required: true },
+    filename: { type: String, required: true },
+    size: { type: Number, required: true },
+  },
+  { toJSON: { virtuals: true }, toObject: { virtuals: true } },
+);
+
+imageSchema.virtual("thumbnail").get(function () {
+  return this.url.replace("/upload", "/upload/w_300,h_300,c_pad");
+});
+imageSchema.virtual("main").get(function () {
+  return this.url.replace("/upload", "/upload/w_1200,h_1200,c_pad");
+});
+imageSchema.virtual("display").get(function () {
+  return this.url.replace("/upload", "/upload/w_500,h_500,c_pad");
+});
+
 // Mongoose Schema definition
 const EventSchema = new Schema<IEvent>(
   {
@@ -27,7 +52,7 @@ const EventSchema = new Schema<IEvent>(
     slug: { type: String, unique: true },
     description: { type: String, required: true },
     overview: { type: String, required: true },
-    image: { type: String, required: true },
+    image: { type: [imageSchema], required: true },
     venue: { type: String, required: true },
     location: { type: String, required: true },
     date: { type: String, required: true },
