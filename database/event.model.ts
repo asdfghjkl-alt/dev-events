@@ -1,4 +1,4 @@
-import { Schema, models, model, Document } from "mongoose";
+import { Schema, models, model } from "mongoose";
 
 // Interface for the Event document, defining raw data structure
 export interface IEvent {
