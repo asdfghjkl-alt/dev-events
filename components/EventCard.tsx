@@ -30,7 +30,11 @@ export default function EventCard({
   };
 
   return (
-    <Link href={`/events/${slug}`} id="event-card" onClick={handleEventCardClick}>
+    <Link
+      href={`/events/${slug}`}
+      id="event-card"
+      onClick={handleEventCardClick}
+    >
       <Image
         src={image}
         alt={title}

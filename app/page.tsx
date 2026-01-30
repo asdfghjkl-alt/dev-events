@@ -3,8 +3,11 @@ import ExploreBtn from "@/components/ExploreBtn";
 import FeaturedEventsSection from "@/components/FeaturedEventsSection";
 import { IEvent } from "@/database/event.model";
 import api from "@/lib/axios";
+import { cacheLife } from "next/cache";
 
 export default async function Home() {
+  "use cache";
+  cacheLife("hours");
   const { data } = await api.get("/events");
   const events = data.events;
 

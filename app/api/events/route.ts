@@ -19,10 +19,15 @@ export const POST = apiHandler(async (req: NextRequest) => {
     );
   }
 
+  let tags = JSON.parse(formData.get("tags") as string);
+  let agenda = JSON.parse(formData.get("agenda") as string);
+
   const uploadedImages = await processEventImages(files);
 
   const newEvent = new Event({
     ...eventData,
+    tags,
+    agenda,
     images: uploadedImages,
   });
 
