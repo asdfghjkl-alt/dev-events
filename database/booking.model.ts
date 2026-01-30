@@ -43,9 +43,6 @@ BookingSchema.pre("save", async function () {
 });
 
 // Index for fast event lookup
-BookingSchema.index({ eventId: 1 });
-
-// Index for fast event lookup
 BookingSchema.index({ createdAt: -1 });
 
 // Index for fast email lookup

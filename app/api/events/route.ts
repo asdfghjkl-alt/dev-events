@@ -10,27 +10,34 @@ export const POST = apiHandler(async (req: NextRequest) => {
   const formData = await req.formData();
   const eventData = Object.fromEntries(formData.entries());
 
-  const file = formData.get("image") as File;
+  const files = formData.getAll("images") as File[];
 
-  if (!file) {
+  if (!files || files.length === 0) {
     return NextResponse.json(
       { message: "Image file is required" },
       { status: 400 },
     );
   }
 
-  // Upload image to Cloudinary using helper
-  const uploadedImages = await processEventImages([file]);
-  const uploadedImage = uploadedImages[0];
+  const uploadedImages = await processEventImages(files);
 
-  // Pass only the URL string to the event creation (assuming schema expects string)
-  const newEvent = await Event.create({
+  const newEvent = new Event({
     ...eventData,
-    image: uploadedImage.url,
+    images: uploadedImages,
   });
+
+  await newEvent.save();
 
   return NextResponse.json(
     { message: "Event created", event: newEvent },
     { status: 201 },
   );
+});
+
+export const GET = apiHandler(async (req: NextRequest) => {
+  await connectToDatabase();
+
+  const events = await Event.find().sort({ createdAt: -1 });
+
+  return NextResponse.json({ message: "Events fetched successfully", events });
 });

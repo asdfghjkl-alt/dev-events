@@ -1,23 +1,16 @@
-import { cloudinary } from "@/cloudinary";
-
-interface ImageType {
-  url: string;
-  filename: string;
-  size: number;
-}
+import { cloudinary } from "@/lib/cloudinary";
+import type { IImage } from "@/database/event.model";
 
 /**
  * Processes uploaded images to Cloudinary
  * @param files Array of File objects from FormData
  */
-export const processEventImages = async (
-  files: File[],
-): Promise<ImageType[]> => {
+export const processEventImages = async (files: File[]): Promise<IImage[]> => {
   const uploadPromises = files.map(async (file) => {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    return new Promise<ImageType>((resolve, reject) => {
+    return new Promise<IImage>((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         {
           resource_type: "image",

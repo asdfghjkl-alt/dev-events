@@ -12,7 +12,7 @@ export interface IEvent {
   slug: string;
   description: string;
   overview: string;
-  image: IImage[];
+  images: IImage[];
   venue: string;
   location: string;
   date: string;
@@ -32,7 +32,12 @@ const imageSchema = new Schema<IImage>(
     filename: { type: String, required: true },
     size: { type: Number, required: true },
   },
-  { toJSON: { virtuals: true }, toObject: { virtuals: true } },
+  {
+    _id: false,
+    id: false,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  },
 );
 
 imageSchema.virtual("thumbnail").get(function () {
@@ -52,7 +57,7 @@ const EventSchema = new Schema<IEvent>(
     slug: { type: String, unique: true },
     description: { type: String, required: true },
     overview: { type: String, required: true },
-    image: { type: [imageSchema], required: true },
+    images: { type: [imageSchema], required: true },
     venue: { type: String, required: true },
     location: { type: String, required: true },
     date: { type: String, required: true },
@@ -82,7 +87,7 @@ EventSchema.pre("save", function () {
   if (this.isModified("date")) {
     const parsedDate = new Date(this.date);
     if (!isNaN(parsedDate.getTime())) {
-      this.date = parsedDate.toISOString();
+      this.date = parsedDate.toISOString().split("T")[0];
     } else {
       throw new Error("Invalid date format");
     }
